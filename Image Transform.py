@@ -84,22 +84,22 @@ def verticalScaling (v):
     # values below 0 = mirroring
     return np.array([[v,0],[0,1]])
 
-def rotation (angle):
+def rotate (angle):
     #  rotation
     # angle in degrees
     angle=math.radians(angle)
-    return np.array([[math.cos(alpha),math.sin(alpha)],[-math.sin(alpha),math.cos(alpha)]])
+    return np.array([[math.cos(angle),math.sin(angle)],[-math.sin(angle),math.cos(angle)]])
 
 
 def mirroring (angle):
     #  mirroring
     # angle in degrees
     angle=math.radians(angle)
-    return np.array([[math.cos(alpha),math.sin(alpha)],[math.sin(alpha),-math.cos(alpha)]])
+    return np.array([[math.cos(angle),math.sin(angle)],[math.sin(angle),-math.cos(angle)]])
 
 
 print(args.ordered_args[0][1])
-trfMatrix=trfMatrix.dot(shear(args.ordered_args[0][1]))
+trfMatrix=trfMatrix.dot(eval(args.ordered_args[0][0])(args.ordered_args[0][1]))
 #trfMatrix*=shear(args.ordered_args[0][1])
 
 '''
