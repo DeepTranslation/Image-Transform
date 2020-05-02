@@ -38,10 +38,12 @@ Applies matrix transformations to an image
 -r 20 -sc .3
 ![Image](./bla2009.jpg)
 -r 40 -sc 2
+
 ![Image](./bla2008.jpg)
 -m 40
 ![Image](./bla2007.jpg)
 -shh -0.5
+
 ![Image](./bla2003.jpg)
 -r 10 -sch 4
 ![Image](./bla2001.jpg)
