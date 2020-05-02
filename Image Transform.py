@@ -119,6 +119,7 @@ except AttributeError:
 # make array with new coordinates by multiplying 
 # transformation matrix with the coordinates
 # null point in the middle of the image
+
 newcoordinateArray=np.asarray([[trfMatrix.dot([y,x])] 
                                for y in range(-round(imageHeight/2),round(imageHeight/2))
                                for x in range(-round(imageWidth/2),round(imageWidth/2))]).reshape(imageHeight,imageWidth,2)
@@ -132,7 +133,6 @@ transformedImage=np.asarray([imageArray[int(round(newcoordinateArray[y,x,0]+imag
                   int(round(newcoordinateArray[y,x,0]+imageHeight/2)) in range(0,imageHeight-1) and
                       int(round(newcoordinateArray[y,x,1]+imageWidth/2)) in range (0,imageWidth-1)
                              else imageArray[0,0]  for y in range(imageHeight)for x in range(imageWidth)])
-
 
 # Plot image array
 plt.figure()
