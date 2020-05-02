@@ -18,45 +18,18 @@ class CustomAction(argparse.Action):
         previous.append((self.dest, values))
         setattr(namespace, 'ordered_args', previous)
 parser = argparse.ArgumentParser()
-#parser.add_argument("-h", "--help", help="Linear transformation of images.")
-
-parser.add_argument("-i", "--inputfile", help="Image file to be transformed")
-parser.add_argument("-o", "--outputfile", help="name of the outputfile")
+parser.add_argument("inputfile", help="Image file to be transformed")
+parser.add_argument("outputfile", help="name of the outputfile")
 parser.add_argument("-sc", "--scale",  type=float, help="scales the image horizontally and vertically by the factor", action=CustomAction)
 parser.add_argument("-sch", "--scaleHorizontally",  type=float, help="scales the image horizontally by the factor", action=CustomAction)
 parser.add_argument("-scv", "--scaleVertically",  type=float, help="scales the image vertically by the factor", action=CustomAction)
-#parser.add_argument("-sh", "--shear",  type=float, help="shears the image horizontally and vertically by the factor", action=CustomAction)
+parser.add_argument("-sh", "--shear",  type=float, help="shears the image horizontally and vertically by the factor", action=CustomAction)
 parser.add_argument("-shh", "--shearHorizontally",  type=float, help="shears the image horizontally by the factor", action=CustomAction)
 parser.add_argument("-shv", "--shearVertically",  type=float, help="shears the image vertically by the factor", action=CustomAction)
 parser.add_argument("-r", "--rotate", type=float, help="Rotates the image by angle", action=CustomAction)
 parser.add_argument("-m", "--mirror", type=float, help="Mirrors along the mirror axis defined by its angle", action=CustomAction)
 
 args = parser.parse_args()
-
-print(args.inputfile)
-print(args.outputfile)
-print(args.ordered_args)
-
-
-try:
-    img = Image.open(args.inputfile, 'r')
-except IOError as e:
-    print('cannot open', args.inputfile)
-    print( "I/O error({0}): {1}".format(e.errno, e.strerror))
-    sys.exit(1)
-
-imageArray = np.asarray(img)
-imageWidth=imageArray.shape[1]
-imageHeight=imageArray.shape[0]
-print(imageArray.shape)
-
-
-# Plot image array
-#plt.figure()
-#plt.imshow(imageArray)
-#plt.show()
-
-trfMatrix=np.array([[1,0],[0,1]])
 
 def scale (f):
     # horizontal and vertical scaling
@@ -78,14 +51,12 @@ def scaleVertically (v):
     # absolute values between 0 and 1 =  increasing size
     # values below 0 = mirroring
     return np.array([[1/v,0],[0,1]])
-''' 
-# Does not work
-# decreases size and rotates image
+
 def shear (s):
     # horizontal and vertical shear 
     # useful values: (-2<=s<=2)
     return np.array([[1,s],[s,1]])
-'''
+
 def shearHorizontally (s):
     # horizontal shear 
     # useful values: (-2<=s<=2)
@@ -95,13 +66,11 @@ def shearVertically (s):
     # vertical shear (-2<=s<=2)
     return np.array([[1,s],[0,1]])
 
-
 def rotate (angle):
     #  rotation
     # angle in degrees
     angle=math.radians(angle)
     return np.array([[math.cos(angle),math.sin(angle)],[-math.sin(angle),math.cos(angle)]])
-
 
 def mirror (angle):
     #  mirroring
@@ -110,11 +79,41 @@ def mirror (angle):
     return np.array([[math.cos(angle),math.sin(angle)],[math.sin(angle),-math.cos(angle)]])
 
 
-# multipliying the transformation matrix with the optional command line arguments
+print(args.inputfile)
+print(args.outputfile)
+
+try:
+    img = Image.open(args.inputfile, 'r')
+except IOError as e:
+    print('cannot open', args.inputfile)
+    print( "I/O error({0}): {1}".format(e.errno, e.strerror))
+    sys.exit(1)
+
+imageArray = np.asarray(img)
+imageWidth=imageArray.shape[1]
+imageHeight=imageArray.shape[0]
+print(imageArray.shape)
+
+# Plot image array
+#plt.figure()
+#plt.imshow(imageArray)
+#plt.show()
+
+# Define identity transformation matrix as a starting point 
+# in case no transformation is specified
+trfMatrix=np.array([[1,0],[0,1]])
+
+
+# multiply the transformation matrix with the optional command line arguments
+
 # eval(args.ordered_args[0][0]) is the function to be called
 # args.ordered_args[0][1] is the value to use for the function
-for i in range(len(args.ordered_args)):
-    trfMatrix=trfMatrix.dot(eval(args.ordered_args[i][0])(args.ordered_args[i][1]))
+try:
+    print(args.ordered_args)
+    for i in range(len(args.ordered_args)):
+        trfMatrix=trfMatrix.dot(eval(args.ordered_args[i][0])(args.ordered_args[i][1]))
+except AttributeError:
+    print("no transformation specified")
 
 
 # make array with new coordinates by multiplying 
