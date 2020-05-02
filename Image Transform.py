@@ -141,5 +141,5 @@ plt.show()
 
 # Save Image
 img= Image.fromarray(transformedImage.reshape(imageHeight,imageWidth,3))
-img.save(args.outputfile)
+img.save("./output/"+ args.outputfile)
 sys.exit(1)
